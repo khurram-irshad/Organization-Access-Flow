@@ -1,0 +1,31 @@
+# Ignore bundler config
+/.bundle
+/vendor
+
+# Ignore application configuration
+/config/master.key
+/config/credentials.yml.enc
+
+# Ignore database
+/db/*.sqlite3
+/db/*.sqlite3-*
+
+# Ignore logs
+/log/*
+!/log/.keep
+
+# Ignore tmp
+/tmp/*
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+
+# Ignore node modules
+/node_modules
+
+# Ignore compiled assets
+/public/assets/*
+!/public/assets/.keep
+
+# Ignore macOS files
+.DS_Store

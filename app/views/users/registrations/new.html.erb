@@ -1,0 +1,20 @@
+<h2>Sign up</h2>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { data: { controller: "age-verification" } }) do |f| %>
+  <%= f.label :email %><br />
+  <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+  <%= f.label :password %><br />
+  <%= f.password_field :password, autocomplete: "new-password" %>
+  <%= f.label :password_confirmation %><br />
+  <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+  <%= f.label :first_name %><br />
+  <%= f.text_field :first_name %>
+  <%= f.label :last_name %><br />
+  <%= f.text_field :last_name %>
+  <%= f.label :date_of_birth %><br />
+  <%= f.date_field :date_of_birth, data: { age_verification_target: "dob", action: "change->age-verification#validateAge" } %>
+  <div style="display: none;" data-age-verification-target="parentEmail">
+    <%= f.label :parent_email %><br />
+    <%= f.email_field :parent_email %>
+  </div>
+  <%= f.submit "Sign up", data: { age_verification_target: "submit" } %>
+<% end %>

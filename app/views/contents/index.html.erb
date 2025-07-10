@@ -1,0 +1,6 @@
+<h1>Available Content for <%= current_user.age_group&.name || "Unknown" %></h1>
+<ul>
+<% @contents.each do |content| %>
+  <li><%= link_to content.title, content_path(content) %></li>
+<% end %>
+</ul>
