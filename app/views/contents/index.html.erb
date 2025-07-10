@@ -1,6 +1,14 @@
-<h1>Available Content for <%= current_user.age_group&.name || "Unknown" %></h1>
-<ul>
-<% @contents.each do |content| %>
-  <li><%= link_to content.title, content_path(content) %></li>
+<h1>Contents</h1>
+<% if @contents.empty? %>
+  <p><%= flash[:alert] || "No contents available for your age group." %></p>
+<% else %>
+  <ul>
+    <% @contents.each do |content| %>
+      <li>
+        <%= link_to content.title, content_path(content) %>
+        (Rating: <%= content.content_rating %>)
+      </li>
+    <% end %>
+  </ul>
 <% end %>
-</ul>
+<%= link_to "Back", root_path %>

@@ -2,12 +2,9 @@ Rails.application.routes.draw do
   # Devise for users with custom registrations controller
   devise_for :users, controllers: { registrations: "users/registrations" }
 
-  # ActiveAdmin routes
-  ActiveAdmin.routes(self)
-
   # Organization and membership resources
   resources :organizations do
-    resources :organization_memberships, only: [:create, :update, :destroy]
+    resource :membership, only: [:create, :destroy]
   end
 
   # Content resources (for age-based access)
@@ -17,7 +14,7 @@ Rails.application.routes.draw do
   resources :age_groups, only: [:index, :show]
 
   # Parental consent resources
-  resources :parental_consents
+  resources :parental_consents, only: [:show, :update]
 
   # Analytics route
   get "/analytics/organization/:organization_id", to: "analytics#organization", as: :organization_analytics

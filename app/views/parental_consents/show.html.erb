@@ -1,0 +1,10 @@
+<h1>Parental Consent for <%= @parental_consent.user.first_name %></h1>
+<p>Please confirm consent for <%= @parental_consent.user.email %> to access the platform.</p>
+<%= form_with model: @parental_consent, url: parental_consent_path(@parental_consent.token), local: true do |f| %>
+  <%= f.hidden_field :status, value: "approved" %>
+  <%= f.submit "Approve" %>
+<% end %>
+<%= form_with model: @parental_consent, url: parental_consent_path(@parental_consent.token), local: true do |f| %>
+  <%= f.hidden_field :status, value: "denied" %>
+  <%= f.submit "Deny" %>
+<% end %>

@@ -1,20 +1,22 @@
 class ContentPolicy < ApplicationPolicy
-    def index?
-      true
+    class Scope < Scope
+      def resolve
+        scope.joins(:organization).where(organizations: { id: user.organization_ids })
+      end
     end
   
     def show?
-      return true if user.has_role?(:admin)
-      return false unless user.organizations.include?(record.organization)
-      case record.content_rating
-      when "G"
-        true
-      when "PG-13"
-        user.age_group&.name&.in?(%w[Teens Adults])
-      when "R"
-        user.age_group&.name == "Adults"
-      else
-        false
+      user.organizations.include?(record.organization) &&
+        (record.content_rating.in?(allowed_ratings))
+    end
+  
+    private
+  
+    def allowed_ratings
+      case user.age_group&.name
+      when "Kids" then ["G"]
+      when "Teens" then ["G", "PG-13"]
+      else ["G", "PG-13", "R"]
       end
     end
   end

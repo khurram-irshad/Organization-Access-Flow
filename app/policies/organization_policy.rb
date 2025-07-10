@@ -1,21 +1,44 @@
 class OrganizationPolicy < ApplicationPolicy
   def index?
-    user.has_role?(:admin) || user.has_role?(:member, Organization)
+    user.present?
   end
 
   def show?
-    user.has_role?(:admin) || user.has_role?(:member, record)
+    user.present?
   end
 
   def create?
-    user.has_role?(:admin)
+    user.present?
+  end
+
+  def new?
+    create?
   end
 
   def update?
-    user.has_role?(:admin)
+    user.present? && user.has_role?(:admin, record)
+  end
+
+  def edit?
+    update?
   end
 
   def destroy?
-    user.has_role?(:admin)
+    user.present? && user.has_role?(:admin, record)
+  end
+
+  class Scope < ApplicationPolicy::Scope
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      if @user&.has_role?(:admin)
+        @scope.all
+      else
+        @scope.joins(:organization_memberships).where(organization_memberships: { user_id: @user.id })
+      end
+    end
   end
 end

@@ -1,3 +1,6 @@
-<p>Hello,</p>
-<p>Your child, <%= @user.email %>, has registered for Organization Access Flow. Please provide consent by visiting <%= link_to "this link", @consent_url %>.</p>
-<p>Thank you!</p>
+<h1>Parental Consent Request</h1>
+<p>Please provide consent for <%= @user.first_name %> (<%= @user.email %>) to access the platform.</p>
+<p>
+  <%= link_to "Approve", parental_consent_url(@consent.token, status: "approved") %>
+  <%= link_to "Deny", parental_consent_url(@consent.token, status: "denied") %>
+</p>

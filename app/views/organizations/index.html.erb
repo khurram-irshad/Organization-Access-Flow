@@ -1,2 +1,30 @@
-<h1>Organizations#index</h1>
-<p>Find me in app/views/organizations/index.html.erb</p>
+<h1>Organizations</h1>
+
+<%= link_to "New Organization", new_organization_path, class: "btn btn-primary" %>
+
+<% if @organizations.any? %>
+  <div style="margin-top: 20px;">
+    <% @organizations.each do |org| %>
+      <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 5px;">
+        <h3><%= link_to org.name, organization_path(org) %></h3>
+        <p><%= org.description %></p>
+        <p><strong>Members:</strong> <%= org.users.count %></p>
+        
+        <% if policy(org).edit? %>
+          <div style="margin-top: 10px;">
+            <%= link_to "Edit", edit_organization_path(org), class: "btn btn-secondary" %>
+            <%= link_to "Delete", organization_path(org), 
+                data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
+                class: "btn btn-danger" %>
+          </div>
+        <% end %>
+        
+        <% if policy(org).show? %>
+          <%= link_to "View Analytics", organization_analytics_path(organization_id: org.id), class: "btn btn-info" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <p>No organizations found. <%= link_to "Create one now!", new_organization_path %></p>
+<% end %>

@@ -1,28 +1,57 @@
 class User < ApplicationRecord
-  rolify
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
-
-  has_one :parental_consent
-
+  rolify
+  belongs_to :age_group, optional: true
   has_many :organization_memberships
   has_many :organizations, through: :organization_memberships
-  
-  belongs_to :age_group, optional: true
+  has_one :parental_consent
+
+  validates :first_name, :last_name, presence: true
   validates :date_of_birth, presence: true
-
-  after_validation :set_age_group, on: [:create, :update]
-
-  def age
-    ((Date.today - date_of_birth) / 365.25).to_i
-  end
+  validates :email, uniqueness: true
 
   def minor?
+    return false unless date_of_birth
+    age = calculate_age
     age < 18
+  end
+
+  def kid?
+    return false unless date_of_birth
+    age = calculate_age
+    age < 13
+  end
+
+  def can_access_platform?
+    return true unless kid?
+    
+    consent = parental_consent
+    return false unless consent
+    
+    consent.status_approved?
+  end
+
+  def active_for_authentication?
+    result = super && can_access_platform?
+    result
+  end
+
+  def inactive_message
+    if kid? && !can_access_platform?
+      :pending_parental_consent
+    else
+      super
+    end
   end
 
   private
 
-  def set_age_group
-    self.age_group = AgeGroup.find_by("min_age <= ? AND max_age >= ?", age, age)
+  def calculate_age
+    today = Date.today
+    age = today.year - date_of_birth.year
+    if today.month < date_of_birth.month || (today.month == date_of_birth.month && today.day < date_of_birth.day)
+      age -= 1
+    end
+    age
   end
 end

@@ -1,14 +1,25 @@
 <h1>Analytics for <%= @organization.name %></h1>
-<p>Total Users: <%= @user_count %></p>
-<h2>Role Distribution</h2>
-<ul>
-<% @role_counts.each do |role, count| %>
-  <li><%= role %>: <%= count %></li>
-<% end %>
-</ul>
-<h2>Content Distribution by Rating</h2>
-<ul>
-<% @content_counts.each do |rating, count| %>
-  <li><%= rating %>: <%= count %></li>
-<% end %>
-</ul>
+<div data-controller="analytics">
+  <div data-analytics-target="section">
+    <h2>User Count</h2>
+    <p><%= @user_count %> users</p>
+  </div>
+  <div data-analytics-target="section">
+    <h2>Role Counts</h2>
+    <ul>
+      <% @role_counts.each do |role, count| %>
+        <li><%= role %>: <%= count %></li>
+      <% end %>
+    </ul>
+  </div>
+  <div data-analytics-target="section">
+    <h2>Content Counts by Rating</h2>
+    <ul>
+      <% @content_counts.each do |rating, count| %>
+        <li><%= rating %>: <%= count %></li>
+      <% end %>
+    </ul>
+  </div>
+  <button data-action="analytics#toggleSections">Toggle Sections</button>
+</div>
+<%= link_to "Back", organization_path(@organization) %>

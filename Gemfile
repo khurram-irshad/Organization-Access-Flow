@@ -23,7 +23,6 @@ gem "jbuilder"
 gem "devise", "~> 4.9"
 gem "rolify", "~> 6.0"
 gem "pundit", "~> 2.3"
-gem "activeadmin", "~> 3.2"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
@@ -62,6 +61,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "mailcatcher"
 end
 
 group :test do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_09_192102) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_10_191738) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -78,9 +78,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_09_192102) do
   create_table "parental_consents", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "parent_email"
-    t.string "status"
+    t.integer "status", default: 0, null: false
+    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["token"], name: "index_parental_consents_on_token", unique: true
     t.index ["user_id"], name: "index_parental_consents_on_user_id"
   end
 

@@ -1,7 +1,7 @@
 class OrganizationsController < ApplicationController
+  include Pundit::Authorization
   before_action :authenticate_user!
   before_action :set_organization, only: [:show, :edit, :update, :destroy]
-  after_action :verify_authorized
 
   def index
     @organizations = policy_scope(Organization)
@@ -19,7 +19,9 @@ class OrganizationsController < ApplicationController
 
   def create
     @organization = Organization.new(organization_params)
+    
     authorize @organization
+    
     if @organization.save
       current_user.add_role(:admin, @organization)
       redirect_to @organization, notice: "Organization created successfully."
