@@ -1,22 +1,49 @@
-<h1>Parental Consent for <%= @parental_consent.user.first_name %></h1>
-<p>Please confirm consent for <%= @parental_consent.user.email %> to access the platform.</p>
+<div class="card" style="max-width: 600px; margin: 2rem auto;">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2rem;">👨‍👩‍👧‍👦 Parental Consent</h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">For <%= @parental_consent.user.first_name %></p>
+  </div>
+  
+  <div class="card-body">
+    <div style="background: rgba(102, 126, 234, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; border-left: 4px solid #667eea;">
+      <p style="font-size: 1.1rem; margin: 0; color: #4a5568;">
+        Please confirm consent for <strong><%= @parental_consent.user.email %></strong> to access our educational platform.
+      </p>
+    </div>
 
-<div style="margin: 20px 0;">
-  <%= button_to "Approve", 
-      parental_consent_path(@parental_consent.token), 
-      method: :patch,
-      params: { status: "approved" },
-      class: "btn btn-success",
-      style: "padding: 10px 20px; margin: 5px; font-size: 16px;" %>
-      
-  <%= button_to "Deny", 
-      parental_consent_path(@parental_consent.token), 
-      method: :patch,
-      params: { status: "denied" },
-      class: "btn btn-danger",
-      style: "padding: 10px 20px; margin: 5px; font-size: 16px;" %>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0;">
+      <%= button_to "✅ Approve Access", 
+          parental_consent_path(@parental_consent.token), 
+          method: :patch,
+          params: { status: "approved" },
+          class: "btn btn-success",
+          style: "padding: 1.25rem; font-size: 1.1rem; border-radius: 12px;" %>
+          
+      <%= button_to "❌ Deny Access", 
+          parental_consent_path(@parental_consent.token), 
+          method: :patch,
+          params: { status: "denied" },
+          class: "btn btn-danger",
+          style: "padding: 1.25rem; font-size: 1.1rem; border-radius: 12px;" %>
+    </div>
+    
+    <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; text-align: center;">
+      <p style="color: #718096; margin: 0; font-size: 0.9rem;">
+        <strong>Current Status:</strong> 
+        <span style="color: <%= @parental_consent.status_pending? ? '#ed8936' : @parental_consent.status_approved? ? '#48bb78' : '#f56565' %>; font-weight: 600;">
+          <%= @parental_consent.status_pending? ? "⏳ Pending" : @parental_consent.status_approved? ? "✅ Approved" : "❌ Denied" %>
+        </span>
+      </p>
+    </div>
+    
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <h3 style="color: #4a5568; margin-bottom: 1rem;">🛡️ What This Means</h3>
+      <ul style="color: #718096; line-height: 1.8; padding-left: 1.5rem;">
+        <li>Your child will have access to age-appropriate educational content</li>
+        <li>All content is filtered based on appropriate ratings (G-rated only for children under 13)</li>
+        <li>You can revoke this consent at any time by contacting us</li>
+        <li>We protect your child's privacy and data according to COPPA regulations</li>
+      </ul>
+    </div>
+  </div>
 </div>
-
-<p style="color: #666; font-size: 14px;">
-  Current status: <%= @parental_consent.status_pending? ? "Pending" : @parental_consent.status_approved? ? "Approved" : "Denied" %>
-</p>

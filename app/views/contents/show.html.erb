@@ -1,5 +1,84 @@
-<h1><%= @content.title %></h1>
-<p><%= @content.description %></p>
-<p>Rating: <%= @content.content_rating %></p>
-<p>Organization: <%= @content.organization.name %></p>
-<%= link_to "Back", contents_path %>
+<div class="card" style="max-width: 800px; margin: 2rem auto;">
+  <div class="card-header">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+      <h1 style="margin: 0; font-size: 2.5rem;"><%= @content.title %></h1>
+      <span style="background: <%= @content.content_rating == 'G' ? '#48bb78' : @content.content_rating == 'PG-13' ? '#ed8936' : '#f56565' %>; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600;">
+        <%= @content.content_rating %> Rating
+      </span>
+    </div>
+  </div>
+  
+  <div class="card-body">
+    <!-- Content Hero Section -->
+    <div style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 16px; padding: 3rem; text-align: center; margin-bottom: 2rem; color: white;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">
+        <%= @content.content_rating == 'G' ? '🎈' : @content.content_rating == 'PG-13' ? '🎬' : '🎭' %>
+      </div>
+      <h2 style="margin: 0; font-size: 1.5rem; opacity: 0.9;">Educational Content</h2>
+    </div>
+    
+    <!-- Content Details -->
+    <div style="display: grid; gap: 2rem; margin-bottom: 2rem;">
+      <!-- Description -->
+      <div style="background: rgba(255, 255, 255, 0.8); padding: 2rem; border-radius: 12px; border: 2px solid #e2e8f0;">
+        <h3 style="margin: 0 0 1rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem;">
+          📝 Description
+        </h3>
+        <p style="margin: 0; color: #718096; line-height: 1.8; font-size: 1.1rem;"><%= @content.description %></p>
+      </div>
+      
+      <!-- Metadata Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+        <!-- Rating Info -->
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 1.5rem; border-radius: 12px; border: 2px solid #e2e8f0;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem;">
+            🎯 Content Rating
+          </h4>
+          <p style="margin: 0; color: #718096; font-size: 1.1rem; font-weight: 600;">
+            <%= @content.content_rating %>
+          </p>
+          <small style="color: #a0aec0; display: block; margin-top: 0.25rem;">
+            <%= case @content.content_rating
+                when 'G' then 'General Audiences - All ages'
+                when 'PG-13' then 'Parental Guidance - Ages 13+'
+                when 'R' then 'Restricted - Ages 18+'
+                end %>
+          </small>
+        </div>
+        
+        <!-- Organization Info -->
+        <div style="background: rgba(255, 255, 255, 0.8); padding: 1.5rem; border-radius: 12px; border: 2px solid #e2e8f0;">
+          <h4 style="margin: 0 0 0.5rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem;">
+            🏢 Organization
+          </h4>
+          <p style="margin: 0; color: #667eea; font-size: 1.1rem; font-weight: 600;">
+            <%= @content.organization.name %>
+          </p>
+          <small style="color: #a0aec0; display: block; margin-top: 0.25rem;">
+            Content provider
+          </small>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Age Appropriateness Notice -->
+    <div style="background: <%= @content.content_rating == 'G' ? 'rgba(72, 187, 120, 0.1)' : @content.content_rating == 'PG-13' ? 'rgba(237, 137, 54, 0.1)' : 'rgba(245, 101, 101, 0.1)' %>; padding: 1.5rem; border-radius: 12px; border-left: 4px solid <%= @content.content_rating == 'G' ? '#48bb78' : @content.content_rating == 'PG-13' ? '#ed8936' : '#f56565' %>; margin-bottom: 2rem;">
+      <h4 style="margin: 0 0 0.5rem 0; color: <%= @content.content_rating == 'G' ? '#2f855a' : @content.content_rating == 'PG-13' ? '#c05621' : '#c53030' %>;">
+        <%= @content.content_rating == 'G' ? '✅' : @content.content_rating == 'PG-13' ? '⚠️' : '🔞' %> 
+        Age Appropriateness
+      </h4>
+      <p style="margin: 0; color: <%= @content.content_rating == 'G' ? '#2f855a' : @content.content_rating == 'PG-13' ? '#c05621' : '#c53030' %>; line-height: 1.6;">
+        <%= case @content.content_rating
+            when 'G' then 'This content is suitable for all ages and contains no material that would be inappropriate for young children.'
+            when 'PG-13' then 'This content may contain material inappropriate for children under 13. Parental guidance suggested.'
+            when 'R' then 'This content is intended for mature audiences only (18+). Contains adult themes and material.'
+            end %>
+      </p>
+    </div>
+    
+    <!-- Navigation -->
+    <div style="text-align: center; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <%= link_to "← Back to Contents", contents_path, class: "btn btn-secondary", style: "padding: 1rem 2rem;" %>
+    </div>
+  </div>
+</div>

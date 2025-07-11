@@ -1,13 +1,41 @@
-<h1>Edit Organization</h1>
-<%= form_with model: @organization, local: true do |f| %>
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name, required: true %>
+<div class="card" style="max-width: 600px; margin: 2rem auto;">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2rem;">✏️ Edit Organization</h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Update your community details</p>
   </div>
-  <div>
-    <%= f.label :description %>
-    <%= f.text_area :description %>
+  
+  <div class="card-body">
+    <%= form_with model: @organization, local: true do |f| %>
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :name, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.text_field :name, required: true, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+        <small style="color: #718096; display: block; margin-top: 0.5rem;">Organization name should be unique and descriptive</small>
+      </div>
+      
+      <div style="margin-bottom: 2rem;">
+        <%= f.label :description, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.text_area :description, rows: 4, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none; resize: vertical; min-height: 120px;" %>
+        <small style="color: #718096; display: block; margin-top: 0.5rem;">Update your organization's mission and goals</small>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem;">
+        <%= f.submit "💾 Update Organization", class: "btn btn-primary", style: "padding: 1rem 2rem; font-size: 1.1rem;" %>
+        <%= link_to "Cancel", @organization, class: "btn btn-secondary", style: "padding: 1rem 1.5rem;" %>
+      </div>
+    <% end %>
+    
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <div style="background: rgba(237, 137, 54, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid #ed8936;">
+        <p style="margin: 0; color: #c05621; font-weight: 500;">⚠️ Important Note</p>
+        <p style="margin: 0.5rem 0 0 0; color: #9c4221; font-size: 0.9rem;">Changes to your organization will be visible to all members immediately.</p>
+      </div>
+    </div>
   </div>
-  <%= f.submit "Update Organization" %>
-<% end %>
-<%= link_to "Back", organizations_path %>
+</div>
+
+<style>
+  input:focus, textarea:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  }
+</style>

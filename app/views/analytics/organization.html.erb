@@ -1,25 +1,189 @@
-<h1>Analytics for <%= @organization.name %></h1>
-<div data-controller="analytics">
-  <div data-analytics-target="section">
-    <h2>User Count</h2>
-    <p><%= @user_count %> users</p>
+<div class="card">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2.5rem;">📊 Analytics Dashboard</h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">for <%= @organization.name %></p>
   </div>
-  <div data-analytics-target="section">
-    <h2>Role Counts</h2>
-    <ul>
-      <% @role_counts.each do |role, count| %>
-        <li><%= role %>: <%= count %></li>
-      <% end %>
-    </ul>
+  
+  <div class="card-body">
+    <!-- Key Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <!-- User Count -->
+      <div style="background: linear-gradient(135deg, #48bb78, #38a169); color: white; padding: 2rem; border-radius: 16px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -20px; right: -20px; font-size: 4rem; opacity: 0.2;">👥</div>
+        <h3 style="margin: 0; font-size: 3rem; font-weight: 700;"><%= @user_count %></h3>
+        <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; opacity: 0.9;">Total Members</p>
+      </div>
+      
+      <!-- Content Count -->
+      <div style="background: linear-gradient(135deg, #4299e1, #3182ce); color: white; padding: 2rem; border-radius: 16px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -20px; right: -20px; font-size: 4rem; opacity: 0.2;">📚</div>
+        <h3 style="margin: 0; font-size: 3rem; font-weight: 700;"><%= @content_counts.values.sum %></h3>
+        <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; opacity: 0.9;">Total Content</p>
+      </div>
+      
+      <!-- Role Distribution -->
+      <div style="background: linear-gradient(135deg, #ed8936, #dd6b20); color: white; padding: 2rem; border-radius: 16px; text-align: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -20px; right: -20px; font-size: 4rem; opacity: 0.2;">👑</div>
+        <h3 style="margin: 0; font-size: 3rem; font-weight: 700;"><%= @role_counts.values.sum %></h3>
+        <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; opacity: 0.9;">Assigned Roles</p>
+      </div>
+    </div>
+    
+    <!-- Detailed Analytics -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+      <!-- Role Distribution Chart -->
+      <div style="background: rgba(255, 255, 255, 0.9); border: 2px solid #e2e8f0; border-radius: 16px; padding: 2rem;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem;">
+          👥 Role Distribution
+        </h3>
+        <% if @role_counts.any? %>
+          <div style="display: grid; gap: 1rem;">
+            <% @role_counts.each do |role, count| %>
+              <div style="display: flex; align-items: center; justify-content: between; gap: 1rem;">
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; color: #4a5568;">
+                      <%= role == 'admin' ? '👑' : '👤' %> <%= role.capitalize %>
+                    </span>
+                    <span style="font-weight: 700; color: #667eea;"><%= count %></span>
+                  </div>
+                  <!-- Progress Bar -->
+                  <div style="background: #e2e8f0; border-radius: 10px; height: 8px; overflow: hidden;">
+                    <div style="background: <%= role == 'admin' ? '#ed8936' : '#4299e1' %>; height: 100%; width: <%= (count.to_f / @role_counts.values.sum * 100).round(1) %>%; border-radius: 10px; transition: all 0.3s ease;"></div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div style="text-align: center; padding: 2rem; color: #a0aec0;">
+            <p style="margin: 0;">No role data available</p>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Content Rating Distribution -->
+      <div style="background: rgba(255, 255, 255, 0.9); border: 2px solid #e2e8f0; border-radius: 16px; padding: 2rem;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem;">
+          📊 Content by Rating
+        </h3>
+        <% if @content_counts.any? %>
+          <div style="display: grid; gap: 1rem;">
+            <% @content_counts.each do |rating, count| %>
+              <div style="display: flex; align-items: center; justify-content: between; gap: 1rem;">
+                <div style="flex: 1;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-weight: 600; color: #4a5568;">
+                      <%= rating == 'G' ? '🎈' : rating == 'PG-13' ? '🎬' : '🎭' %> <%= rating %>
+                    </span>
+                    <span style="font-weight: 700; color: #667eea;"><%= count %></span>
+                  </div>
+                  <!-- Progress Bar -->
+                  <div style="background: #e2e8f0; border-radius: 10px; height: 8px; overflow: hidden;">
+                    <div style="background: <%= rating == 'G' ? '#48bb78' : rating == 'PG-13' ? '#ed8936' : '#f56565' %>; height: 100%; width: <%= (count.to_f / @content_counts.values.sum * 100).round(1) %>%; border-radius: 10px; transition: all 0.3s ease;"></div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div style="text-align: center; padding: 2rem; color: #a0aec0;">
+            <p style="margin: 0;">No content available</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Interactive Section -->
+    <div style="margin-top: 2rem; text-align: center;">
+      <button onclick="toggleSections()" class="btn btn-secondary" style="padding: 1rem 2rem;">
+        🔄 Toggle View
+      </button>
+    </div>
+    
+    <!-- Summary Insights -->
+    <div style="margin-top: 3rem; background: rgba(102, 126, 234, 0.05); padding: 2rem; border-radius: 16px; border-left: 4px solid #667eea;">
+      <h3 style="margin: 0 0 1rem 0; color: #667eea;">💡 Key Insights</h3>
+      <div style="display: grid; gap: 0.75rem; color: #718096;">
+        <p style="margin: 0;">
+          • Your organization has <strong style="color: #4a5568;"><%= @user_count %></strong> active members
+        </p>
+        <% if @content_counts.any? %>
+          <p style="margin: 0;">
+            • Most content is rated <strong style="color: #4a5568;"><%= @content_counts.max_by{|k,v| v}[0] %></strong> 
+            (<%= @content_counts.max_by{|k,v| v}[1] %> items)
+          </p>
+        <% end %>
+        <% if @role_counts.any? %>
+          <p style="margin: 0;">
+            • <%= @role_counts['admin'] || 0 %> administrator(s) and <%= @role_counts['member'] || 0 %> member(s)
+          </p>
+        <% end %>
+        <p style="margin: 0;">
+          • Organization is performing well with good engagement levels
+        </p>
+      </div>
+    </div>
+    
+    <!-- Member Activity Breakdown -->
+    <div style="margin-top: 2rem; background: rgba(255, 255, 255, 0.9); border: 2px solid #e2e8f0; border-radius: 16px; padding: 2rem;">
+      <h3 style="margin: 0 0 1.5rem 0; color: #4a5568; display: flex; align-items: center; gap: 0.5rem;">
+        📈 Organization Health
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <!-- Engagement Score -->
+        <div style="text-align: center; padding: 1rem; background: rgba(72, 187, 120, 0.1); border-radius: 12px;">
+          <h4 style="margin: 0; color: #2f855a; font-size: 1.5rem;">
+            <%= (@user_count > 0 && @content_counts.values.sum > 0) ? '🟢 High' : @user_count > 0 ? '🟡 Medium' : '🔴 Low' %>
+          </h4>
+          <p style="margin: 0.25rem 0 0 0; color: #68d391; font-size: 0.9rem;">Engagement Level</p>
+        </div>
+        
+        <!-- Content Diversity -->
+        <div style="text-align: center; padding: 1rem; background: rgba(66, 153, 225, 0.1); border-radius: 12px;">
+          <h4 style="margin: 0; color: #2c5282; font-size: 1.5rem;">
+            <%= @content_counts.keys.length > 1 ? '🌈 Diverse' : @content_counts.any? ? '📚 Growing' : '📭 Empty' %>
+          </h4>
+          <p style="margin: 0.25rem 0 0 0; color: #4299e1; font-size: 0.9rem;">Content Variety</p>
+        </div>
+        
+        <!-- Community Size -->
+        <div style="text-align: center; padding: 1rem; background: rgba(237, 137, 54, 0.1); border-radius: 12px;">
+          <h4 style="margin: 0; color: #c05621; font-size: 1.5rem;">
+            <%= @user_count >= 10 ? '🏢 Large' : @user_count >= 5 ? '👥 Medium' : @user_count > 0 ? '🌱 Small' : '🆕 New' %>
+          </h4>
+          <p style="margin: 0.25rem 0 0 0; color: #ed8936; font-size: 0.9rem;">Community Size</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Navigation -->
+    <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <%= link_to "← Back to Organization", organization_path(@organization), class: "btn btn-secondary", style: "padding: 1rem 2rem;" %>
+    </div>
   </div>
-  <div data-analytics-target="section">
-    <h2>Content Counts by Rating</h2>
-    <ul>
-      <% @content_counts.each do |rating, count| %>
-        <li><%= rating %>: <%= count %></li>
-      <% end %>
-    </ul>
-  </div>
-  <button data-action="analytics#toggleSections">Toggle Sections</button>
 </div>
-<%= link_to "Back", organization_path(@organization) %>
+
+<script>
+function toggleSections() {
+  const sections = document.querySelectorAll('[data-analytics-target="section"]');
+  const detailedSections = document.querySelectorAll('.card-body > div:nth-child(n+3)');
+  
+  detailedSections.forEach(section => {
+    if (section.style.display === 'none') {
+      section.style.display = 'block';
+      section.style.opacity = '0';
+      setTimeout(() => {
+        section.style.transition = 'opacity 0.3s ease';
+        section.style.opacity = '1';
+      }, 10);
+    } else {
+      section.style.transition = 'opacity 0.3s ease';
+      section.style.opacity = '0';
+      setTimeout(() => {
+        section.style.display = 'none';
+      }, 300);
+    }
+  });
+}
+</script>

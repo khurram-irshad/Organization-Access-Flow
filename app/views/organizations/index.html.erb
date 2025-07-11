@@ -1,62 +1,105 @@
-<h1>Organizations</h1>
+<div class="card">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2.5rem;">🏢 Organizations</h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Discover and join educational communities</p>
+  </div>
+  
+  <div class="card-body">
+    <!-- Only show "New Organization" to teens and adults, NOT kids -->
+    <% if policy(Organization).create? %>
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <%= link_to "➕ Create New Organization", new_organization_path, class: "btn btn-primary", style: "padding: 1rem 2rem; font-size: 1.1rem;" %>
+      </div>
+    <% end %>
 
-<!-- Only show "New Organization" to teens and adults, NOT kids -->
-<% if policy(Organization).create? %>
-  <p><%= link_to "New Organization", new_organization_path, class: "btn btn-primary" %></p>
-<% end %>
-
-<% if @organizations.any? %>
-  <div style="margin-top: 20px;">
-    <% @organizations.each do |org| %>
-      <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0; border-radius: 5px;">
-        <h3><%= link_to org.name, organization_path(org) %></h3>
-        <p><%= org.description %></p>
-        <p><strong>Members:</strong> <%= org.users.count %></p>
-        
-        <!-- Show join/member status -->
-        <% unless current_user.organizations.include?(org) %>
-          <%= button_to "Join Organization", 
-              organization_membership_path(org), 
-              method: :post,
-              class: "btn btn-success" %>
-        <% else %>
-          <p style="color: green;"><strong>✓ You are a member</strong></p>
-          <% if current_user.has_role?(:admin, org) %>
-            <p style="color: blue;"><em>Role: Administrator</em></p>
-          <% elsif current_user.has_role?(:member, org) %>
-            <p style="color: gray;"><em>Role: Member</em></p>
-          <% end %>
-          
-          <!-- Show leave option for members -->
-          <%= button_to "Leave Organization", 
-              organization_membership_path(org), 
-              method: :delete,
-              data: { confirm: "Are you sure you want to leave?" },
-              class: "btn btn-warning btn-sm" %>
-        <% end %>
-        
-        <!-- ONLY show admin options if user is ADMIN of THIS specific organization -->
-        <% if current_user.has_role?(:admin, org) %>
-          <div style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 3px;">
-            <strong>Admin Actions:</strong><br>
-            <%= link_to "Edit", edit_organization_path(org), class: "btn btn-secondary btn-sm" %>
-            <%= button_to "Delete", organization_path(org), 
-                method: :delete, 
-                data: { confirm: "Are you sure?" }, 
-                class: "btn btn-danger btn-sm" %>
-            <%= link_to "View Analytics", 
-                organization_analytics_path(organization_id: org.id), 
-                class: "btn btn-info btn-sm" %>
+    <% if @organizations.any? %>
+      <div style="display: grid; gap: 1.5rem;">
+        <% @organizations.each do |org| %>
+          <div style="background: rgba(255, 255, 255, 0.8); border: 2px solid #e2e8f0; padding: 2rem; border-radius: 16px; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <!-- Decorative gradient -->
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: start;">
+              <div>
+                <h3 style="margin: 0 0 0.5rem 0; color: #2d3748;">
+                  <%= link_to org.name, organization_path(org), style: "color: #667eea; text-decoration: none; font-size: 1.5rem; font-weight: 700;" %>
+                </h3>
+                <p style="color: #718096; margin: 0 0 1rem 0; line-height: 1.6;"><%= org.description %></p>
+                <p style="color: #a0aec0; margin: 0; font-size: 0.9rem;">
+                  <span style="background: #edf2f7; padding: 0.25rem 0.75rem; border-radius: 20px; color: #4a5568;">
+                    👥 <%= org.users.count %> members
+                  </span>
+                </p>
+              </div>
+              
+              <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 200px;">
+                <!-- Show join/member status -->
+                <% unless current_user.organizations.include?(org) %>
+                  <%= button_to "🚀 Join Organization", 
+                      organization_membership_path(org), 
+                      method: :post,
+                      class: "btn btn-success",
+                      style: "width: 100%; white-space: nowrap;" %>
+                <% else %>
+                  <div style="background: rgba(72, 187, 120, 0.1); padding: 0.75rem; border-radius: 8px; text-align: center; border: 2px solid #48bb78;">
+                    <p style="margin: 0; color: #2f855a; font-weight: 600;">✓ You are a member</p>
+                    <% if current_user.has_role?(:admin, org) %>
+                      <p style="margin: 0.25rem 0 0 0; color: #667eea; font-size: 0.8rem; font-weight: 600;">👑 Administrator</p>
+                    <% elsif current_user.has_role?(:member, org) %>
+                      <p style="margin: 0.25rem 0 0 0; color: #718096; font-size: 0.8rem;">👤 Member</p>
+                    <% end %>
+                  </div>
+                  
+                  <!-- Show leave option for members -->
+                  <%= button_to "👋 Leave Organization", 
+                      organization_membership_path(org), 
+                      method: :delete,
+                      data: { confirm: "Are you sure you want to leave?" },
+                      class: "btn btn-warning btn-sm",
+                      style: "width: 100%;" %>
+                <% end %>
+                
+                <!-- ONLY show admin options if user is ADMIN of THIS specific organization -->
+                <% if current_user.has_role?(:admin, org) %>
+                  <div style="background: rgba(102, 126, 234, 0.05); padding: 1rem; border-radius: 8px; border: 1px dashed #667eea;">
+                    <p style="margin: 0 0 0.75rem 0; font-weight: 600; color: #667eea; font-size: 0.9rem;">⚙️ Admin Actions</p>
+                    <div style="display: grid; gap: 0.5rem;">
+                      <%= link_to "✏️ Edit", edit_organization_path(org), class: "btn btn-secondary btn-sm", style: "width: 100%;" %>
+                      <%= button_to "🗑️ Delete", organization_path(org), 
+                          method: :delete, 
+                          data: { confirm: "Are you sure?" }, 
+                          class: "btn btn-danger btn-sm",
+                          style: "width: 100%;" %>
+                      <%= link_to "📊 Analytics", 
+                          organization_analytics_path(organization_id: org.id), 
+                          class: "btn btn-info btn-sm",
+                          style: "width: 100%;" %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
           </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div style="text-align: center; padding: 3rem; background: rgba(102, 126, 234, 0.05); border-radius: 16px; border: 2px dashed #667eea;">
+        <h3 style="color: #667eea; margin: 0 0 1rem 0;">🔍 No organizations found</h3>
+        <% if policy(Organization).create? %>
+          <p style="color: #718096; margin: 0 0 1.5rem 0;">Be the first to create an organization!</p>
+          <%= link_to "🌟 Create the first organization", new_organization_path, class: "btn btn-primary" %>
+        <% else %>
+          <p style="color: #718096; margin: 0;">Please wait for organizations to be created by adults or teens.</p>
         <% end %>
       </div>
     <% end %>
   </div>
-<% else %>
-  <p>No organizations found.</p>
-  <% if policy(Organization).create? %>
-    <p><%= link_to "Create the first organization!", new_organization_path %></p>
-  <% else %>
-    <p>Please wait for organizations to be created by adults or teens.</p>
-  <% end %>
-<% end %>
+</div>
+
+<style>
+  .card-body > div > div:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+  }
+</style>

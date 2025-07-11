@@ -1,14 +1,87 @@
-<h1>Contents</h1>
-<% if @contents.empty? %>
-  <p><%= flash[:alert] || "No contents available for your age group." %></p>
-<% else %>
-  <ul>
-    <% @contents.each do |content| %>
-      <li>
-        <%= link_to content.title, content_path(content) %>
-        (Rating: <%= content.content_rating %>)
-      </li>
+<div class="card">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2.5rem;">📚 Contents</h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Discover age-appropriate educational content</p>
+  </div>
+  
+  <div class="card-body">
+    <% if @contents.empty? %>
+      <div style="text-align: center; padding: 3rem; background: rgba(102, 126, 234, 0.05); border-radius: 16px; border: 2px dashed #667eea;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">📖</div>
+        <h3 style="color: #667eea; margin: 0 0 1rem 0;">No content available</h3>
+        <p style="color: #718096; margin: 0 0 1.5rem 0; font-size: 1.1rem;">
+          <%= flash[:alert] || "No contents available for your age group." %>
+        </p>
+        <% if current_user.organization_ids.empty? %>
+          <%= link_to "🏢 Join an Organization", organizations_path, class: "btn btn-primary", style: "padding: 1rem 2rem;" %>
+        <% else %>
+          <p style="color: #a0aec0; font-style: italic;">Content will appear here as administrators add it to your organizations.</p>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- Content Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        <% @contents.each do |content| %>
+          <div style="background: rgba(255, 255, 255, 0.9); border: 2px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <!-- Rating Badge -->
+            <div style="position: absolute; top: 1rem; right: 1rem;">
+              <span style="background: <%= content.content_rating == 'G' ? '#48bb78' : content.content_rating == 'PG-13' ? '#ed8936' : '#f56565' %>; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                <%= content.content_rating %>
+              </span>
+            </div>
+            
+            <!-- Content Icon -->
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <span style="font-size: 1.5rem; color: white;">
+                <%= content.content_rating == 'G' ? '🎈' : content.content_rating == 'PG-13' ? '🎬' : '🎭' %>
+              </span>
+            </div>
+            
+            <!-- Content Info -->
+            <h3 style="margin: 0 0 0.5rem 0; color: #2d3748; font-size: 1.2rem; padding-right: 4rem;">
+              <%= link_to content.title, content_path(content), style: "color: #667eea; text-decoration: none; font-weight: 700;" %>
+            </h3>
+            
+            <p style="color: #718096; margin: 0 0 1rem 0; font-size: 0.9rem; line-height: 1.5;">
+              <%= truncate(content.description, length: 100) %>
+            </p>
+            
+            <!-- Organization Badge -->
+            <div style="background: #edf2f7; padding: 0.5rem; border-radius: 8px; margin-bottom: 1rem;">
+              <p style="margin: 0; color: #4a5568; font-size: 0.8rem;">
+                🏢 <strong><%= content.organization.name %></strong>
+              </p>
+            </div>
+            
+            <!-- Action Button -->
+            <%= link_to "📖 View Content", content_path(content), class: "btn btn-primary btn-sm", style: "width: 100%;" %>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Age Filter Info -->
+      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(102, 126, 234, 0.05); border-radius: 12px; border-left: 4px solid #667eea;">
+        <h3 style="margin: 0 0 0.5rem 0; color: #667eea; font-size: 1.1rem;">🎯 Content Filtering</h3>
+        <p style="margin: 0; color: #718096; line-height: 1.6;">
+          Content is filtered based on your age group for a safe learning experience. 
+          <% case current_user.age_group&.name %>
+          <% when "Kids" %>
+            <strong style="color: #48bb78;">Kids (under 13):</strong> You can view G-rated content only.
+          <% when "Teens" %>
+            <strong style="color: #ed8936;">Teens (13-17):</strong> You can view G and PG-13 rated content.
+          <% else %>
+            <strong style="color: #667eea;">Adults (18+):</strong> You can view all content ratings.
+          <% end %>
+        </p>
+      </div>
     <% end %>
-  </ul>
-<% end %>
-<%= link_to "Back", root_path %>
+  </div>
+</div>
+
+<style>
+  .card-body > div > div:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+  }
+</style>

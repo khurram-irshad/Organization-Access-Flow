@@ -1,6 +1,94 @@
-<h1>Parental Consent Request</h1>
-<p>Please provide consent for <%= @user.first_name %> (<%= @user.email %>) to access the platform.</p>
-<p>
-  <%= link_to "Approve", parental_consent_url(@consent.token, status: "approved") %>
-  <%= link_to "Deny", parental_consent_url(@consent.token, status: "denied") %>
-</p>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Parental Consent Request</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f7fafc;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    .content {
+      padding: 2rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .btn-success {
+      background: #48bb78;
+      color: white;
+    }
+    .btn-danger {
+      background: #f56565;
+      color: white;
+    }
+    .alert {
+      background: rgba(102, 126, 234, 0.1);
+      border-left: 4px solid #667eea;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0; font-size: 2rem;">👨‍👩‍👧‍👦 Parental Consent Request</h1>
+      <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Your child wants to join our educational platform</p>
+    </div>
+    
+    <div class="content">
+      <div class="alert">
+        <p style="margin: 0; font-size: 1.1rem;">
+          <strong><%= @user.first_name %></strong> (<%= @user.email %>) has requested access to our educational platform.
+        </p>
+      </div>
+      
+      <h3>🛡️ What this means:</h3>
+      <ul style="color: #718096; line-height: 1.8;">
+        <li>Your child will have access to age-appropriate educational content (G-rated only)</li>
+        <li>All content is carefully filtered and moderated</li>
+        <li>We protect your child's privacy according to COPPA regulations</li>
+        <li>You can revoke this consent at any time</li>
+      </ul>
+      
+      <div style="text-align: center; margin: 2rem 0;">
+        <%= link_to "✅ Approve Access", parental_consent_url(@consent.token, status: "approved"), class: "btn btn-success" %>
+        <%= link_to "❌ Deny Access", parental_consent_url(@consent.token, status: "denied"), class: "btn btn-danger" %>
+      </div>
+      
+      <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; text-align: center; margin-top: 2rem;">
+        <p style="margin: 0; color: #718096; font-size: 0.9rem;">
+          This link will expire in 30 days. If you have any questions, please contact our support team.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

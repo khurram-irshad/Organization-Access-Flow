@@ -1,77 +1,89 @@
-<h2>Sign Up</h2>
-<% if @user&.errors&.any? %>
-  <div style="background-color: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-    <h4 style="color: red; margin: 0 0 10px 0;">Please fix the following errors:</h4>
-    <ul style="margin: 0;">
-      <% @user.errors.full_messages.each do |msg| %>
-        <li style="color: red;"><%= msg %></li>
-      <% end %>
-    </ul>
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+  <div class="card-header">
+    <h2 style="margin: 0; font-size: 2rem;">✨ Create Your Account</h2>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Join our community today</p>
   </div>
-<% end %>
+  
+  <div class="card-body">
+    <% if @user&.errors&.any? %>
+      <div class="alert alert-danger">
+        <h4 style="margin: 0 0 0.5rem 0;">Please fix the following errors:</h4>
+        <ul style="margin: 0; padding-left: 1.5rem;">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-<%= form_with model: @user, url: user_registration_path, local: true do |f| %>
-  <div>
-    <%= f.label :email %>
-    <%= f.email_field :email, required: true %>
+    <%= form_with model: @user, url: user_registration_path, local: true, style: "display: block;" do |f| %>
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :email, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.email_field :email, required: true, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :password, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.password_field :password, required: true, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :password_confirmation, "Confirm Password", style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.password_field :password_confirmation, required: true, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <%= f.label :first_name, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+          <%= f.text_field :first_name, required: true, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+        </div>
+        <div>
+          <%= f.label :last_name, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+          <%= f.text_field :last_name, required: true, style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :date_of_birth, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.date_field :date_of_birth, required: true, onchange: "toggleParentEmailField()", style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+      </div>
+      
+      <div id="parent-email-section" style="display: none; margin-bottom: 1.5rem; padding: 1rem; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border-left: 4px solid #667eea;">
+        <%= f.label :parent_email, "🔒 Parent's Email (Required for users under 13)", style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #667eea;" %>
+        <%= f.email_field :parent_email, style: "width: 100%; padding: 0.75rem; border: 2px solid #667eea; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+        <small style="color: #666; display: block; margin-top: 0.5rem; font-style: italic;">📧 We'll send a verification email to your parent/guardian</small>
+      </div>
+      
+      <%= f.submit "🚀 Create Account", class: "btn btn-primary", style: "width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;" %>
+    <% end %>
+    
+    <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <p style="color: #718096;">Already have an account?</p>
+      <%= link_to "Sign In", new_user_session_path, class: "btn btn-secondary", style: "margin-top: 0.5rem;" %>
+    </div>
   </div>
-  
-  <div>
-    <%= f.label :password %>
-    <%= f.password_field :password, required: true %>
-  </div>
-  
-  <div>
-    <%= f.label :password_confirmation %>
-    <%= f.password_field :password_confirmation, required: true %>
-  </div>
-  
-  <div>
-    <%= f.label :first_name %>
-    <%= f.text_field :first_name, required: true %>
-  </div>
-  
-  <div>
-    <%= f.label :last_name %>
-    <%= f.text_field :last_name, required: true %>
-  </div>
-  
-  <div>
-    <%= f.label :date_of_birth %>
-    <%= f.date_field :date_of_birth, required: true, onchange: "toggleParentEmailField()" %>
-  </div>
-  
-  <div id="parent-email-section" style="display: none;">
-    <%= f.label :parent_email, "Parent's Email (Required for users under 13)" %>
-    <%= f.email_field :parent_email %>
-    <small style="color: #666; display: block;">We'll send a verification email to your parent/guardian</small>
-  </div>
-  
-  <%= f.submit "Sign Up" %>
-<% end %>
+</div>
+
+<style>
+  input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  }
+</style>
 
 <script>
 function toggleParentEmailField() {
-  console.log('🔄 toggleParentEmailField called');
-  
   const dateInput = document.querySelector('input[type="date"]');
   const parentSection = document.getElementById('parent-email-section');
   const parentEmailInput = document.querySelector('input[name="user[parent_email]"]');
   
-  console.log('📅 Date input:', dateInput);
-  console.log('📧 Parent section:', parentSection);
-  console.log('📧 Parent email input:', parentEmailInput);
-  
   if (!dateInput || !parentSection || !parentEmailInput) {
-    console.error('❌ Required elements not found');
     return;
   }
   
   const dobValue = dateInput.value;
-  console.log('📅 Date value:', dobValue);
   
   if (!dobValue) {
-    console.log('❌ No date selected');
     parentSection.style.display = 'none';
     parentEmailInput.required = false;
     parentEmailInput.value = '';
@@ -81,36 +93,26 @@ function toggleParentEmailField() {
   const dob = new Date(dobValue);
   const today = new Date();
   
-  console.log('📅 DOB:', dob);
-  console.log('📅 Today:', today);
-  
   let age = today.getFullYear() - dob.getFullYear();
   
-  // Adjust age if birthday hasn't occurred this year
   if (today.getMonth() < dob.getMonth() || 
       (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())) {
     age--;
   }
   
   const isKid = age < 13;
-  console.log('🧮 Calculated age:', age);
-  console.log('👶 Is kid (under 13):', isKid);
   
   if (isKid) {
-    console.log('✅ Showing parent email field');
     parentSection.style.display = 'block';
     parentEmailInput.required = true;
   } else {
-    console.log('❌ Hiding parent email field');
     parentSection.style.display = 'none';
     parentEmailInput.required = false;
     parentEmailInput.value = '';
   }
 }
 
-// Call the function when the page loads in case there's already a date value
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('📄 Page loaded, checking initial state');
   toggleParentEmailField();
 });
 </script>

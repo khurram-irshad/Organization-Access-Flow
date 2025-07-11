@@ -1,13 +1,44 @@
-<h1>New Organization</h1>
-<%= form_with model: @organization, local: true do |f| %>
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name, required: true %>
+<div class="card" style="max-width: 600px; margin: 2rem auto;">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2rem;">🌟 Create New Organization</h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Build your educational community</p>
   </div>
-  <div>
-    <%= f.label :description %>
-    <%= f.text_area :description %>
+  
+  <div class="card-body">
+    <%= form_with model: @organization, local: true do |f| %>
+      <div style="margin-bottom: 1.5rem;">
+        <%= f.label :name, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.text_field :name, required: true, placeholder: "Enter organization name...", style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none;" %>
+        <small style="color: #718096; display: block; margin-top: 0.5rem;">Choose a unique, descriptive name for your organization</small>
+      </div>
+      
+      <div style="margin-bottom: 2rem;">
+        <%= f.label :description, style: "display: block; margin-bottom: 0.5rem; font-weight: 600; color: #4a5568;" %>
+        <%= f.text_area :description, rows: 4, placeholder: "Describe your organization's mission and goals...", style: "width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; outline: none; resize: vertical; min-height: 120px;" %>
+        <small style="color: #718096; display: block; margin-top: 0.5rem;">Help others understand what your organization is about</small>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem;">
+        <%= f.submit "🚀 Create Organization", class: "btn btn-primary", style: "padding: 1rem 2rem; font-size: 1.1rem;" %>
+        <%= link_to "Cancel", organizations_path, class: "btn btn-secondary", style: "padding: 1rem 1.5rem;" %>
+      </div>
+    <% end %>
+    
+    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <h3 style="color: #4a5568; margin-bottom: 1rem;">ℹ️ What happens next?</h3>
+      <ul style="color: #718096; line-height: 1.8; padding-left: 1.5rem;">
+        <li>You'll automatically become the administrator of this organization</li>
+        <li>You can invite others to join your community</li>
+        <li>You'll have access to analytics and management tools</li>
+        <li>You can create and manage age-appropriate content</li>
+      </ul>
+    </div>
   </div>
-  <%= f.submit "Create Organization" %>
-<% end %>
-<%= link_to "Back", organizations_path %>
+</div>
+
+<style>
+  input:focus, textarea:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+  }
+</style>

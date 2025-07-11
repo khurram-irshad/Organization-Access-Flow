@@ -1,50 +1,83 @@
-<h1><%= @organization.name %></h1>
-<p><%= @organization.description %></p>
-<p><strong>Members:</strong> <%= @organization.users.count %></p>
-
-<% if current_user.organizations.include?(@organization) %>
-  <div style="background-color: #d4edda; padding: 10px; margin: 10px 0; border-radius: 5px;">
-    <p><strong>✓ You are a member of this organization</strong></p>
-    <% if current_user.has_role?(:admin, @organization) %>
-      <p style="color: blue;"><em>Role: Administrator</em></p>
-    <% elsif current_user.has_role?(:member, @organization) %>
-      <p style="color: gray;"><em>Role: Member</em></p>
-    <% end %>
+<div class="card">
+  <div class="card-header">
+    <h1 style="margin: 0; font-size: 2.5rem;"><%= @organization.name %></h1>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;"><%= @organization.description %></p>
   </div>
   
-  <!-- Leave organization option -->
-  <%= button_to "Leave Organization", 
-      organization_membership_path(@organization), 
-      method: :delete, 
-      data: { confirm: "Are you sure you want to leave this organization?" },
-      class: "btn btn-warning" %>
-<% else %>
-  <!-- Join organization option -->
-  <%= button_to "Join Organization", 
-      organization_membership_path(@organization), 
-      method: :post,
-      class: "btn btn-success" %>
-<% end %>
+  <div class="card-body">
+    <!-- Organization Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+      <div style="background: rgba(72, 187, 120, 0.1); padding: 1.5rem; border-radius: 12px; text-align: center; border-left: 4px solid #48bb78;">
+        <h3 style="margin: 0; color: #2f855a; font-size: 2rem;"><%= @organization.users.count %></h3>
+        <p style="margin: 0; color: #68d391; font-weight: 600;">👥 Members</p>
+      </div>
+    </div>
 
-<!-- Admin-only features -->
-<% if policy(@organization).edit? %>
-  <hr style="margin: 20px 0;">
-  <div class="admin-actions">
-    <h3>Admin Actions</h3>
-    <%= link_to "Edit Organization", edit_organization_path(@organization), class: "btn btn-secondary" %>
-    <%= button_to "Delete Organization", 
-        organization_path(@organization), 
-        method: :delete, 
-        data: { confirm: "Are you sure? This will delete the organization and all its content." },
-        class: "btn btn-danger" %>
+    <!-- Membership Status -->
+    <% if current_user.organizations.include?(@organization) %>
+      <div style="background: rgba(72, 187, 120, 0.1); padding: 2rem; border-radius: 16px; margin-bottom: 2rem; border: 2px solid #48bb78; text-align: center;">
+        <h2 style="margin: 0 0 1rem 0; color: #2f855a;">✅ You are a member of this organization</h2>
+        <% if current_user.has_role?(:admin, @organization) %>
+          <div style="background: rgba(102, 126, 234, 0.1); padding: 1rem; border-radius: 8px; border: 2px solid #667eea; display: inline-block;">
+            <p style="margin: 0; color: #667eea; font-weight: 700; font-size: 1.1rem;">👑 Role: Administrator</p>
+          </div>
+        <% elsif current_user.has_role?(:member, @organization) %>
+          <div style="background: rgba(160, 174, 192, 0.1); padding: 1rem; border-radius: 8px; border: 2px solid #a0aec0; display: inline-block;">
+            <p style="margin: 0; color: #718096; font-weight: 600; font-size: 1.1rem;">👤 Role: Member</p>
+          </div>
+        <% end %>
+        
+        <!-- Leave organization option -->
+        <div style="margin-top: 1.5rem;">
+          <%= button_to "👋 Leave Organization", 
+              organization_membership_path(@organization), 
+              method: :delete, 
+              data: { confirm: "Are you sure you want to leave this organization?" },
+              class: "btn btn-warning",
+              style: "padding: 1rem 2rem;" %>
+        </div>
+      </div>
+    <% else %>
+      <!-- Join organization option -->
+      <div style="background: rgba(102, 126, 234, 0.05); padding: 2rem; border-radius: 16px; margin-bottom: 2rem; border: 2px dashed #667eea; text-align: center;">
+        <h2 style="margin: 0 0 1rem 0; color: #667eea;">🚀 Ready to join this community?</h2>
+        <p style="color: #718096; margin: 0 0 1.5rem 0;">Get access to exclusive content and connect with other members.</p>
+        <%= button_to "✨ Join Organization", 
+            organization_membership_path(@organization), 
+            method: :post,
+            class: "btn btn-success",
+            style: "padding: 1rem 2rem; font-size: 1.1rem;" %>
+      </div>
+    <% end %>
+
+    <!-- Admin-only features -->
+    <% if policy(@organization).edit? %>
+      <div style="background: rgba(102, 126, 234, 0.05); padding: 2rem; border-radius: 16px; margin-bottom: 2rem; border: 2px solid #667eea;">
+        <h3 style="margin: 0 0 1.5rem 0; color: #667eea;">⚙️ Admin Actions</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <%= link_to "✏️ Edit Organization", edit_organization_path(@organization), class: "btn btn-secondary", style: "padding: 1rem;" %>
+          <%= button_to "🗑️ Delete Organization", 
+              organization_path(@organization), 
+              method: :delete, 
+              data: { confirm: "Are you sure? This will delete the organization and all its content." },
+              class: "btn btn-danger",
+              style: "padding: 1rem;" %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if policy(@organization).show? && current_user.has_role?(:admin, @organization) %>
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <%= link_to "📊 View Analytics", 
+            organization_analytics_path(organization_id: @organization.id), 
+            class: "btn btn-info",
+            style: "padding: 1rem 2rem; font-size: 1.1rem;" %>
+      </div>
+    <% end %>
+
+    <!-- Navigation -->
+    <div style="text-align: center; padding-top: 2rem; border-top: 2px solid #f7fafc;">
+      <%= link_to "← Back to Organizations", organizations_path, class: "btn btn-secondary" %>
+    </div>
   </div>
-<% end %>
-
-<% if policy(@organization).show? && current_user.has_role?(:admin, @organization) %>
-  <%= link_to "View Analytics", 
-      organization_analytics_path(organization_id: @organization.id), 
-      class: "btn btn-info" %>
-<% end %>
-
-<hr style="margin: 20px 0;">
-<%= link_to "← Back to Organizations", organizations_path, class: "btn btn-secondary" %>
+</div>
