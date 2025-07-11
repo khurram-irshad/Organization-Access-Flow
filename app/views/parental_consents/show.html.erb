@@ -1,10 +1,22 @@
 <h1>Parental Consent for <%= @parental_consent.user.first_name %></h1>
 <p>Please confirm consent for <%= @parental_consent.user.email %> to access the platform.</p>
-<%= form_with model: @parental_consent, url: parental_consent_path(@parental_consent.token), local: true do |f| %>
-  <%= f.hidden_field :status, value: "approved" %>
-  <%= f.submit "Approve" %>
-<% end %>
-<%= form_with model: @parental_consent, url: parental_consent_path(@parental_consent.token), local: true do |f| %>
-  <%= f.hidden_field :status, value: "denied" %>
-  <%= f.submit "Deny" %>
-<% end %>
+
+<div style="margin: 20px 0;">
+  <%= button_to "Approve", 
+      parental_consent_path(@parental_consent.token), 
+      method: :patch,
+      params: { status: "approved" },
+      class: "btn btn-success",
+      style: "padding: 10px 20px; margin: 5px; font-size: 16px;" %>
+      
+  <%= button_to "Deny", 
+      parental_consent_path(@parental_consent.token), 
+      method: :patch,
+      params: { status: "denied" },
+      class: "btn btn-danger",
+      style: "padding: 10px 20px; margin: 5px; font-size: 16px;" %>
+</div>
+
+<p style="color: #666; font-size: 14px;">
+  Current status: <%= @parental_consent.status_pending? ? "Pending" : @parental_consent.status_approved? ? "Approved" : "Denied" %>
+</p>

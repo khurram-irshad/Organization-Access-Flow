@@ -1,43 +1,50 @@
 <h1><%= @organization.name %></h1>
 <p><%= @organization.description %></p>
-<p>Members: <%= @organization.users.count %></p>
+<p><strong>Members:</strong> <%= @organization.users.count %></p>
 
 <% if current_user.organizations.include?(@organization) %>
-  <p><strong>You are a member of this organization</strong></p>
-  <% if current_user.has_role?(:admin, @organization) %>
-    <p><em>Role: Administrator</em></p>
-  <% elsif current_user.has_role?(:member, @organization) %>
-    <p><em>Role: Member</em></p>
-  <% end %>
+  <div style="background-color: #d4edda; padding: 10px; margin: 10px 0; border-radius: 5px;">
+    <p><strong>✓ You are a member of this organization</strong></p>
+    <% if current_user.has_role?(:admin, @organization) %>
+      <p style="color: blue;"><em>Role: Administrator</em></p>
+    <% elsif current_user.has_role?(:member, @organization) %>
+      <p style="color: gray;"><em>Role: Member</em></p>
+    <% end %>
+  </div>
   
+  <!-- Leave organization option -->
   <%= button_to "Leave Organization", 
       organization_membership_path(@organization), 
       method: :delete, 
-      data: { turbo_confirm: "Are you sure you want to leave this organization?" },
-      class: "btn btn-danger" %>
+      data: { confirm: "Are you sure you want to leave this organization?" },
+      class: "btn btn-warning" %>
 <% else %>
+  <!-- Join organization option -->
   <%= button_to "Join Organization", 
       organization_membership_path(@organization), 
       method: :post,
-      class: "btn btn-primary" %>
+      class: "btn btn-success" %>
 <% end %>
 
+<!-- Admin-only features -->
 <% if policy(@organization).edit? %>
-  <hr>
+  <hr style="margin: 20px 0;">
   <div class="admin-actions">
+    <h3>Admin Actions</h3>
     <%= link_to "Edit Organization", edit_organization_path(@organization), class: "btn btn-secondary" %>
     <%= button_to "Delete Organization", 
         organization_path(@organization), 
         method: :delete, 
-        data: { turbo_confirm: "Are you sure? This will delete the organization and all its content." },
+        data: { confirm: "Are you sure? This will delete the organization and all its content." },
         class: "btn btn-danger" %>
   </div>
 <% end %>
 
-<% if policy(@organization).show? %>
+<% if policy(@organization).show? && current_user.has_role?(:admin, @organization) %>
   <%= link_to "View Analytics", 
       organization_analytics_path(organization_id: @organization.id), 
       class: "btn btn-info" %>
 <% end %>
 
-<%= link_to "Back to Organizations", organizations_path, class: "btn btn-secondary" %>
+<hr style="margin: 20px 0;">
+<%= link_to "← Back to Organizations", organizations_path, class: "btn btn-secondary" %>

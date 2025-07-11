@@ -1,6 +1,9 @@
 <h1>Organizations</h1>
 
-<%= link_to "New Organization", new_organization_path, class: "btn btn-primary" %>
+<!-- Only show "New Organization" to teens and adults, NOT kids -->
+<% if policy(Organization).create? %>
+  <p><%= link_to "New Organization", new_organization_path, class: "btn btn-primary" %></p>
+<% end %>
 
 <% if @organizations.any? %>
   <div style="margin-top: 20px;">
@@ -10,21 +13,50 @@
         <p><%= org.description %></p>
         <p><strong>Members:</strong> <%= org.users.count %></p>
         
-        <% if policy(org).edit? %>
-          <div style="margin-top: 10px;">
-            <%= link_to "Edit", edit_organization_path(org), class: "btn btn-secondary" %>
-            <%= link_to "Delete", organization_path(org), 
-                data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, 
-                class: "btn btn-danger" %>
-          </div>
+        <!-- Show join/member status -->
+        <% unless current_user.organizations.include?(org) %>
+          <%= button_to "Join Organization", 
+              organization_membership_path(org), 
+              method: :post,
+              class: "btn btn-success" %>
+        <% else %>
+          <p style="color: green;"><strong>✓ You are a member</strong></p>
+          <% if current_user.has_role?(:admin, org) %>
+            <p style="color: blue;"><em>Role: Administrator</em></p>
+          <% elsif current_user.has_role?(:member, org) %>
+            <p style="color: gray;"><em>Role: Member</em></p>
+          <% end %>
+          
+          <!-- Show leave option for members -->
+          <%= button_to "Leave Organization", 
+              organization_membership_path(org), 
+              method: :delete,
+              data: { confirm: "Are you sure you want to leave?" },
+              class: "btn btn-warning btn-sm" %>
         <% end %>
         
-        <% if policy(org).show? %>
-          <%= link_to "View Analytics", organization_analytics_path(organization_id: org.id), class: "btn btn-info" %>
+        <!-- ONLY show admin options if user is ADMIN of THIS specific organization -->
+        <% if current_user.has_role?(:admin, org) %>
+          <div style="margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 3px;">
+            <strong>Admin Actions:</strong><br>
+            <%= link_to "Edit", edit_organization_path(org), class: "btn btn-secondary btn-sm" %>
+            <%= button_to "Delete", organization_path(org), 
+                method: :delete, 
+                data: { confirm: "Are you sure?" }, 
+                class: "btn btn-danger btn-sm" %>
+            <%= link_to "View Analytics", 
+                organization_analytics_path(organization_id: org.id), 
+                class: "btn btn-info btn-sm" %>
+          </div>
         <% end %>
       </div>
     <% end %>
   </div>
 <% else %>
-  <p>No organizations found. <%= link_to "Create one now!", new_organization_path %></p>
+  <p>No organizations found.</p>
+  <% if policy(Organization).create? %>
+    <p><%= link_to "Create the first organization!", new_organization_path %></p>
+  <% else %>
+    <p>Please wait for organizations to be created by adults or teens.</p>
+  <% end %>
 <% end %>

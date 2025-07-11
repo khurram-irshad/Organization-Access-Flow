@@ -8,7 +8,7 @@ class OrganizationPolicy < ApplicationPolicy
   end
 
   def create?
-    user.present?
+    user.present? && !user.kid?
   end
 
   def new?
@@ -37,7 +37,7 @@ class OrganizationPolicy < ApplicationPolicy
       if @user&.has_role?(:admin)
         @scope.all
       else
-        @scope.joins(:organization_memberships).where(organization_memberships: { user_id: @user.id })
+        @scope.all
       end
     end
   end
