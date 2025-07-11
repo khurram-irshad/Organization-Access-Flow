@@ -2,15 +2,15 @@ Rails.application.routes.draw do
   # Devise for users with custom registrations controller
   devise_for :users, controllers: { registrations: "users/registrations" }
 
-  # Organization and membership resources - FIXED ROUTING
+  # Organization and membership resources
   resources :organizations do
     resource :membership, only: [:create, :destroy], controller: 'organization_memberships'
   end
 
-  # Content resources (for age-based access)
+  # Content resources
   resources :contents, only: [:index, :show]
 
-  # Age group resources (view-only per PRD)
+  # Age group resources
   resources :age_groups, only: [:index, :show]
 
   # Parental consent resources
